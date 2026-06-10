@@ -1,2 +1,35 @@
-# skill
-Install the Lizard agent skill: npx skills add lizard-build/skill
+# Lizard agent skill
+
+Thin bootstrap skill that teaches your AI agent to deploy and manage apps on
+[Lizard](https://lizard.build) through the `lizard` CLI (`@lizard-build/cli`).
+
+## Install
+
+```bash
+npx skills add lizard-build/skill
+```
+
+Global (available across all projects):
+
+```bash
+npx skills add lizard-build/skill -g
+```
+
+Works with Claude Code, Cursor, Codex, Copilot, Gemini CLI, and other agents that
+support the [Agent Skills](https://agentskills.io) format.
+
+## How it works
+
+This repo intentionally stays tiny. The `SKILL.md` here is a **bootstrap**: it
+
+1. ensures the `lizard` CLI is installed (`npm install -g @lizard-build/cli`), and
+2. loads the full, up-to-date usage guide straight from the CLI via
+   `lizard skills get core --json`.
+
+The authoritative guide ships inside the CLI and is versioned with it, so the
+instructions your agent follows are always matched to the installed CLI version -
+no stale copies to maintain. Updating the CLI updates the guidance:
+
+```bash
+npm update -g @lizard-build/cli
+```
