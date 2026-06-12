@@ -16,6 +16,12 @@ first; only fall back to install / permission help when a command actually fails
 Do NOT improvise `lizard` commands from this file - the full instructions, flags,
 and exit codes come from the loaded core guide.
 
+**Never run the CLI via `npx` (`npx @lizard-build/cli`, `npx lizard`, etc.).**
+Always use the globally installed `lizard` binary. `npx` pulls a throwaway copy
+into a cache, whose version may not match the loaded guide and which bypasses the
+install flow below. If `lizard` is not on PATH, install it (step 2a) - do not
+reach for `npx`, even just to check whether it works.
+
 ## Step 1 - Load the core guide (try first)
 
 Run immediately:
