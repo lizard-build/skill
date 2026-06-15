@@ -34,17 +34,6 @@ This returns `{ name, frontmatter, content, ... }`. Read `content` in full - it 
 the complete, up-to-date Lizard usage guide (build pipeline, env precedence,
 addons, discovery, exit codes, everything). Follow it for the rest of the task.
 
-If this succeeds, also check freshness once per session:
-
-```
-lizard upgrade --check --json
-```
-
-If it returns `"updateAvailable": true`, tell the user a newer CLI exists and
-offer to run `lizard upgrade` (the guide ships inside the CLI and updates with
-it). If it returns `rate_limited` or `check_failed`, continue silently - the
-check is never a blocker.
-
 Then skip straight to **Step 3**. Do not run `command -v lizard` or install
 anything preemptively.
 
@@ -98,11 +87,28 @@ lizard <cmd> --help --json
 
 If the CLI is too old, suggest updating: `lizard upgrade`.
 
+## Step 2.5 - Login (hand the user a clickable link)
+
+Loading the guide and `lizard status` need no auth, but the first real command
+(deploy, list, logs...) fails with exit code `2` / "not authenticated". When that
+happens, run login yourself - do NOT just tell the user to run it:
+
+```
+lizard login
+```
+
+This is safe from a tool call: it creates a session, prints an authentication URL
+to stderr, tries to open the browser, and exits immediately - it does NOT block
+or poll. Capture that URL and **give it to the user as a clickable link**, asking
+them to open it and finish login in the browser.
+
+Once they confirm, re-run their original command - the pending session is picked
+up automatically and the command proceeds. If login still reports "pending", they
+haven't finished yet; wait and retry. (`! lizard login` in the user's own terminal
+still works too, but prefer handing over the link.)
+
 ## Step 3 - Act
 
 If `$ARGUMENTS` is non-empty, treat it as the user's request and act on it using
 the guide from step 1 (or the recovery path in step 2). If empty, ask what they
 want to do on Lizard.
-
-Because the guide ships inside the installed CLI, updating it (`lizard upgrade`)
-updates the instructions too - this thin file rarely needs to change.
