@@ -34,8 +34,8 @@ This returns `{ name, frontmatter, content, ... }`. Read `content` in full - it 
 the complete, up-to-date Lizard usage guide (build pipeline, env precedence,
 addons, discovery, exit codes, everything). Follow it for the rest of the task.
 
-Then skip straight to **Step 3**. Do not run `command -v lizard` or install
-anything preemptively.
+If it loads, skip the recovery in Step 2 and continue to **Step 3**. Do not run
+`command -v lizard` or install anything preemptively.
 
 ## Step 2 - Recover only on failure
 
@@ -87,7 +87,7 @@ lizard <cmd> --help --json
 
 If the CLI is too old, suggest updating: `lizard upgrade`.
 
-## Step 2.5 - Login (hand the user a clickable link)
+## Step 3 - Login (hand the user a clickable link)
 
 Loading the guide and `lizard status` need no auth, but the first real command
 (deploy, list, logs...) fails with exit code `2` / "not authenticated". When that
@@ -107,7 +107,7 @@ up automatically and the command proceeds. If login still reports "pending", the
 haven't finished yet; wait and retry. (`! lizard login` in the user's own terminal
 still works too, but prefer handing over the link.)
 
-## Step 3 - Act
+## Step 4 - Act
 
 If `$ARGUMENTS` is non-empty, treat it as the user's request and act on it using
 the guide from step 1 (or the recovery path in step 2). If empty, ask what they
