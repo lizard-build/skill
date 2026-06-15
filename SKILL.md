@@ -34,8 +34,10 @@ This returns `{ name, frontmatter, content, ... }`. Read `content` in full - it 
 the complete, up-to-date Lizard usage guide (build pipeline, env precedence,
 addons, discovery, exit codes, everything). Follow it for the rest of the task.
 
-If it loads, skip the recovery in Step 2 and continue to **Step 3**. Do not run
-`command -v lizard` or install anything preemptively.
+If it loads, skip the recovery in Step 2 and go straight to **Step 4** to act -
+assume the user is already logged in. Do not run `command -v lizard`, do not log
+in preemptively, and do not install anything. Only drop to Step 3 if a command
+actually reports no auth.
 
 ## Step 2 - Recover only on failure
 
@@ -87,11 +89,11 @@ lizard <cmd> --help --json
 
 If the CLI is too old, suggest updating: `lizard upgrade`.
 
-## Step 3 - Login (hand the user a clickable link)
+## Step 3 - Login (only if not authenticated)
 
-Loading the guide and `lizard status` need no auth, but the first real command
-(deploy, list, logs...) fails with exit code `2` / "not authenticated". When that
-happens, run login yourself - do NOT just tell the user to run it:
+Do NOT log in proactively. Stay optimistic and assume the user is already
+authenticated. You only land here if a command in Step 4 fails with exit code
+`2` / "not authenticated". When that happens, run login yourself:
 
 ```
 lizard login
@@ -99,13 +101,12 @@ lizard login
 
 This is safe from a tool call: it creates a session, prints an authentication URL
 to stderr, tries to open the browser, and exits immediately - it does NOT block
-or poll. Capture that URL and **give it to the user as a clickable link**, asking
-them to open it and finish login in the browser.
+or poll. Capture that URL and **ask the user to log in via that clickable link**.
 
-Once they confirm, re-run their original command - the pending session is picked
-up automatically and the command proceeds. If login still reports "pending", they
-haven't finished yet; wait and retry. (`! lizard login` in the user's own terminal
-still works too, but prefer handing over the link.)
+Once they confirm, re-run their original command and continue in Step 4 - the
+pending session is picked up automatically. If login still reports "pending",
+they haven't finished yet; wait and retry. (`! lizard login` in the user's own
+terminal still works too, but prefer handing over the link.)
 
 ## Step 4 - Act
 
