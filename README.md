@@ -6,12 +6,6 @@ Thin bootstrap skill that teaches your AI agent to deploy and manage apps on
 ## Install
 
 ```bash
-npx skills add lizard-build/skill
-```
-
-Global (available across all projects):
-
-```bash
 npx skills add lizard-build/skill -g
 ```
 
