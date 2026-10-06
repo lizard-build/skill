@@ -18,7 +18,8 @@ This repo intentionally stays tiny. The `SKILL.md` here is a **bootstrap**: it
 
 1. loads the full, up-to-date usage guide straight from the CLI via
    `lizard skills get core --json`, installing the CLI first only if it's
-   missing (`npm install -g @lizard-build/cli`), and
+   missing (`npm install -g @lizard-build/cli`, or
+   `curl -fsSL https://lizard.build/install.sh | bash` without Node.js), and
 2. checks for a newer CLI (`lizard upgrade --check`) so the guidance stays
    current.
 

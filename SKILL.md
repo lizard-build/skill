@@ -52,6 +52,16 @@ Install it globally, then retry step 1:
 npm install -g @lizard-build/cli
 ```
 
+If `npm` itself is missing (no Node.js) on macOS or Linux, use the install
+script instead. It adds `~/.lizard/bin` to `PATH` only for new shells, so in
+this session start each CLI call with the export (or call
+`~/.lizard/bin/lizard` directly):
+
+```
+curl -fsSL https://lizard.build/install.sh | bash
+export PATH="$HOME/.lizard/bin:$PATH" && lizard skills get core --json
+```
+
 ### 2b. Permission denied (EACCES) on global install
 
 Do NOT retry with `sudo`. Ask the user to run the install themselves in their
@@ -65,7 +75,13 @@ npm install -g @lizard-build/cli
 If they hit `EACCES` / permission errors again, explain the usual fixes (pick
 what fits their setup):
 
-- **Recommended:** use a user-owned npm prefix (no sudo):
+- **Recommended on macOS or Linux:** the install script, which needs neither
+  sudo nor npm. The user runs it in their own terminal, then you call the CLI
+  as in step 2a:
+  ```bash
+  curl -fsSL https://lizard.build/install.sh | bash
+  ```
+- **Or** use a user-owned npm prefix (no sudo):
   ```bash
   mkdir -p ~/.npm-global
   npm config set prefix ~/.npm-global
