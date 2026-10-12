@@ -22,17 +22,27 @@ into a cache, whose version may not match the loaded guide and which bypasses th
 install flow below. If `lizard` is not on PATH, install it (step 2a) - do not
 reach for `npx`, even just to check whether it works.
 
-## Step 1 - Load the core guide (try first)
+## Step 1 - Load the guide for the task (try first)
 
-Run immediately:
+Pick the guide by the task and run it immediately:
 
-```
-lizard skills get core --json
-```
+- **Sandboxes**: run code or an agent in a sandbox, a cloud machine or code
+  interpreter, files, ports, snapshots, a desktop, Lizard SDK:
 
-This returns `{ name, frontmatter, content, ... }`. Read `content` in full - it is
-the complete, up-to-date Lizard usage guide (build pipeline, env precedence,
-addons, discovery, exit codes, everything). Follow it for the rest of the task.
+  ```
+  lizard skills get sandbox --json
+  ```
+
+- **Everything else**: deploys, services, databases, domains, secrets, logs:
+
+  ```
+  lizard skills get core --json
+  ```
+
+Each returns `{ name, frontmatter, content, ... }`. Read `content` in full - it
+is the complete, up-to-date guide for that area, with sign-in, exit codes and
+billing in both. Follow it for the rest of the task. A task that needs both, such
+as a sandbox that talks to a deployed database, loads both.
 
 If it loads, skip the recovery in Step 2 and go straight to **Step 4** to act -
 assume the user is already logged in. Do not run `command -v lizard`, do not log
@@ -83,9 +93,12 @@ land in a user-writable directory.
 
 After they confirm install, retry `lizard skills get core --json`.
 
-### 2c. Core skill unavailable (old CLI, offline, or missing `skills` command)
+### 2c. Guide unavailable (old CLI, offline, or missing `skills` command)
 
-Fall back to runtime discovery before running anything:
+If `lizard skills get sandbox` says there is no such skill, the CLI predates it:
+load `core`, which held the sandbox sections then, and suggest `lizard upgrade`.
+
+If no guide loads, fall back to runtime discovery before running anything:
 
 ```
 lizard --help --json
