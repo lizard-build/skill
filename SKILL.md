@@ -59,6 +59,10 @@ found, call it as `~/.lizard/bin/lizard` for the rest of this session. If they
 say another `lizard` comes first on `PATH`, tell the user: it is usually an old
 npm install, and `npm uninstall -g @lizard-build/cli` removes it.
 
+The script ends by signing in. If the machine is not signed in yet, its last
+lines are a JSON object with `status: "pending"` and the sign-in links: hand
+them to the user as described in Step 3.
+
 On Windows, or if the script cannot run (no `curl`, unsupported system, failed
 download), install from npm instead:
 
@@ -90,24 +94,35 @@ lizard <cmd> --help --json
 
 If the CLI is too old, suggest updating: `lizard upgrade`.
 
-## Step 3 - Login (only if not authenticated)
+## Step 3 - Sign in (only when needed)
 
-Do NOT log in proactively. Stay optimistic and assume the user is already
-authenticated. You only land here if a command in Step 4 fails with exit code
-`2` / "not authenticated". When that happens, run login yourself:
+Do NOT sign in proactively. Stay optimistic and assume the user is signed in.
+You rarely need `lizard login`, because the sign-in links come to you on their
+own:
 
-```
-lizard login
-```
+- in the install script's last lines (Step 2a), when it could not sign in yet;
+- in the JSON error of any command that fails with exit code `2`, under
+  `error.body.login`.
 
-This is safe from a tool call: it creates a session, prints an authentication URL
-to stderr, tries to open the browser, and exits immediately - it does NOT block
-or poll. Capture that URL and **ask the user to log in via that clickable link**.
+Both have the same shape: `status: "pending"`, `authUrls` with one link per
+sign-in method (`github`, `google`), and an `instruction`. Nothing waits and no
+browser opens. Ask the user how they sign in to Lizard and give them that link
+as a clickable URL. Someone who already has an account must use the same method
+as before: another method opens a second, empty account unless both share a
+verified email. A new user can pick either.
 
-Once they confirm, re-run their original command and continue in Step 4 - the
-pending session is picked up automatically. If login still reports "pending",
-they haven't finished yet; wait and retry. (`! lizard login` in the user's own
-terminal still works too, but prefer handing over the link.)
+Once they say the browser shows "CLI authorized", re-run the command that
+failed, or after an install just carry on: the next `lizard` command picks the
+sign-in up. If it still reports pending, they have not finished yet; wait and
+retry. A link lasts 5 minutes, and the next run prints a new one.
+
+An exit code `2` error without links comes from CI, or from a platform that
+could not be reached: then retry later, or run `lizard login --json`, which
+prints the same object. In CI
+or on a server nobody can open a link: ask for an API token and set
+`LIZARD_TOKEN`, or save it with `printf '%s' "$TOKEN" | lizard login --token-stdin`.
+In the user's own terminal, `! lizard login` asks GitHub or Google and opens the
+browser.
 
 ## Step 4 - Act
 
